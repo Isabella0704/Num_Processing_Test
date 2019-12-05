@@ -2,7 +2,8 @@
 Masked wordcloud
 ================
 Using a mask you can generate wordclouds in arbitrary shapes.
-如果在jupyter notebook中运行，记得把alice文件放到同一目录下
+新版本加入了结巴分词的优化（调用TF-IDF算法的函数）
+注意Alice图片最好放入同一文件夹下
 """
 
 from os import path
@@ -10,6 +11,8 @@ from os import path
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import jieba
+import jieba.analyse
 
 from wordcloud import WordCloud, STOPWORDS
 
@@ -19,6 +22,9 @@ d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
 # Read the whole text.
 #原先是open(path.join())，但由于这种方式无法加入encoding参数，改为直接open，由于图片文件在同一文件夹下，没有报错
 text = open('a_dream_in_red_mansions.txt', encoding='utf-8').read() 
+
+#结巴分词
+mytext = " ".join(jieba.analyse.extract_tags(text, topK=300))
 
 # read the mask image
 # taken from
@@ -33,7 +39,7 @@ wc = WordCloud(font_path="simsun.ttf", width=2000, height=1000,background_color=
                stopwords=stopwords, contour_width=0.2, contour_color='grey')
 
 # generate word cloud
-wc.generate(text)
+wc.generate(mytext)
 
 # store to file
 wc.to_file(path.join(d, "alice.png"))
